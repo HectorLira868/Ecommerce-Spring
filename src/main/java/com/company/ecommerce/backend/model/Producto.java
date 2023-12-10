@@ -1,6 +1,17 @@
 package com.company.ecommerce.backend.model;
 
-public class Product {
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "productos")
+public class Producto {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	private String nombre;
 	private String descripcion;
@@ -8,10 +19,13 @@ public class Product {
 	private double precio;
 	private int cantidad;
 	
-	public Product() {
+	@ManyToOne
+	private Usuario usuario;
+	
+	public Producto() {
 	}
 	
-	public Product(Integer id, String nombre, String descripcion, String imagen, Double precio, int cantidad) {
+	public Producto(Integer id, String nombre, String descripcion, String imagen, Double precio, int cantidad) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
@@ -69,9 +83,17 @@ public class Product {
 		this.cantidad = cantidad;
 	}
 
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
 	@Override
 	public String toString() {
-		return "Product [id=" + id + ", nombre=" + nombre + ", descripcion=" + descripcion + ", imagen=" + imagen
+		return "Producto [id=" + id + ", nombre=" + nombre + ", descripcion=" + descripcion + ", imagen=" + imagen
 				+ ", precio=" + precio + ", cantidad=" + cantidad + "]";
 	}
 	

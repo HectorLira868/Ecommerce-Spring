@@ -1,6 +1,19 @@
 package com.company.ecommerce.backend.model;
 
-public class User {
+import java.util.List;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "usuarios")
+public class Usuario {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	private String nombre;
 	private String username;
@@ -10,10 +23,16 @@ public class User {
 	private String tipo;
 	private String password;
 	
-	public User() {
+	@OneToMany(mappedBy = "usuario")
+	private List<Producto> productos;
+	
+	@OneToMany(mappedBy = "usuario")
+	private List<Orden> ordenes;
+	
+	public Usuario() {
 
 	}
-	public User(Integer id, String nombre, String username, String email, String direccion, String telefono,
+	public Usuario(Integer id, String nombre, String username, String email, String direccion, String telefono,
 			String tipo, String password) {
 		super();
 		this.id = id;
@@ -73,9 +92,16 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	
+	public List<Producto> getProductos() {
+		return productos;
+	}
+	public void setProductos(List<Producto> productos) {
+		this.productos = productos;
+	}
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", nombre=" + nombre + ", username=" + username + ", email=" + email + ", direccion="
+		return "Usuario [id=" + id + ", nombre=" + nombre + ", username=" + username + ", email=" + email + ", direccion="
 				+ direccion + ", telefono=" + telefono + ", tipo=" + tipo + ", password=" + password + "]";
 	}
 
