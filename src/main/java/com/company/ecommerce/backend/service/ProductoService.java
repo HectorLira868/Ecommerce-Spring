@@ -1,5 +1,6 @@
 package com.company.ecommerce.backend.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.company.ecommerce.backend.model.Producto;
@@ -10,4 +11,5 @@ public interface ProductoService {
 	public void	update(Producto producto);
 	public void	delete(Integer id);
 
+	List<Producto> findAll();
 }
