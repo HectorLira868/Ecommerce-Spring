@@ -26,6 +26,8 @@ import com.company.ecommerce.backend.service.IOrdenService;
 import com.company.ecommerce.backend.service.IProductoService;
 import com.company.ecommerce.backend.service.IUsuarioService;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/")
 public class HomeController {
@@ -34,13 +36,13 @@ public class HomeController {
 
 	@Autowired
 	private IProductoService productoService;
-	
+
 	@Autowired
 	private IUsuarioService usuarioService;
-	
+
 	@Autowired
 	private IOrdenService ordenService;
-	
+
 	@Autowired
 	private IDetalleOrdenService detalleOrdenService;
 
@@ -51,8 +53,11 @@ public class HomeController {
 	Orden orden = new Orden();
 
 	@GetMapping("")
-	public String home(Model model) {
+	public String home(Model model, HttpSession session) {
+		log.info("Sesión de usuario: {}", session.getAttribute("idusuario"));
 		model.addAttribute("productos", productoService.findAll());
+		// session
+		model.addAttribute("sesion", session.getAttribute("idusuario"));
 		return "usuario/home";
 	}
 
@@ -133,35 +138,35 @@ public class HomeController {
 
 	//
 	@GetMapping("/order")
-	public String order(Model model) {
-		Usuario usuario = usuarioService.findById(1).get();
-		
+	public String order(Model model, HttpSession session) {
+		Usuario usuario = usuarioService.findById(Integer.parseInt(session.getAttribute("idusuario").toString())).get();
+
 		model.addAttribute("cart", detalles);
 		model.addAttribute("orden", orden);
 		model.addAttribute("usuario", usuario);
-		
+
 		return "usuario/resumenorden";
 	}
-	
-	//Guardar la orden
+
+	// Guardar la orden
 	@GetMapping("/saveOrden")
-	public String saveOrden() {
+	public String saveOrden(HttpSession session) {
 		Date fechaCreacion = new Date();
 		orden.setFechaCreacion(fechaCreacion);
 		orden.setNumero(ordenService.generarNumeroOrden());
-		
-		//Usuario
-		Usuario usuario = usuarioService.findById(1).get();
+
+		// Usuario
+		Usuario usuario = usuarioService.findById(Integer.parseInt(session.getAttribute("idusuario").toString())).get();
 		orden.setUsuario(usuario);
 		ordenService.save(orden);
-		
-		//Guardar detalles
+
+		// Guardar detalles
 		for (DetalleOrden dt : detalles) {
 			dt.setOrden(orden);
 			detalleOrdenService.save(dt);
 		}
-		
-		//Limpiar lista y orden 
+
+		// Limpiar lista y orden
 		orden = new Orden();
 		detalles.clear();
 		return "redirect:/";
@@ -170,7 +175,8 @@ public class HomeController {
 	@PostMapping("/search")
 	public String searchProduct(@RequestParam String nombre, Model model) {
 		log.info("Nombre del produco: {}", nombre);
-		List<Producto> productos = productoService.findAll().stream().filter(p -> p.getNombre().toLowerCase().contains(nombre)).collect(Collectors.toList());
+		List<Producto> productos = productoService.findAll().stream()
+				.filter(p -> p.getNombre().toLowerCase().contains(nombre)).collect(Collectors.toList());
 		model.addAttribute("productos", productos);
 		return "usuario/home";
 	}

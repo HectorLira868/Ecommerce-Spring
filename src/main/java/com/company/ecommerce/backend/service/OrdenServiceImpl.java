@@ -34,9 +34,10 @@ public class OrdenServiceImpl implements IOrdenService {
 		ordenes.stream().forEach(o -> numeros.add(Integer.parseInt(o.getNumero())));
 
 		if (ordenes.isEmpty()) {
-			numero++;
+			numero = 1;
 		} else {
 			numero = numeros.stream().max(Integer::compare).get();
+			numero++;
 		}
 
 		if (numero < 10) {
