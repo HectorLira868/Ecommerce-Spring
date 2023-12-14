@@ -1,6 +1,7 @@
 package com.company.ecommerce.backend.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,8 @@ import com.company.ecommerce.backend.model.DetalleOrden;
 import com.company.ecommerce.backend.model.Orden;
 import com.company.ecommerce.backend.model.Producto;
 import com.company.ecommerce.backend.model.Usuario;
+import com.company.ecommerce.backend.service.IDetalleOrdenService;
+import com.company.ecommerce.backend.service.IOrdenService;
 import com.company.ecommerce.backend.service.IProductoService;
 import com.company.ecommerce.backend.service.IUsuarioService;
 
@@ -33,6 +36,12 @@ public class HomeController {
 	
 	@Autowired
 	private IUsuarioService usuarioService;
+	
+	@Autowired
+	private IOrdenService ordenService;
+	
+	@Autowired
+	private IDetalleOrdenService detalleOrdenService;
 
 	// Almacena los detalles de la orden
 	List<DetalleOrden> detalles = new ArrayList<DetalleOrden>();
@@ -131,6 +140,30 @@ public class HomeController {
 		model.addAttribute("usuario", usuario);
 		
 		return "usuario/resumenorden";
+	}
+	
+	//Guardar la orden
+	@GetMapping("/saveOrden")
+	public String saveOrden() {
+		Date fechaCreacion = new Date();
+		orden.setFechaCreacion(fechaCreacion);
+		orden.setNumero(ordenService.generarNumeroOrden());
+		
+		//Usuario
+		Usuario usuario = usuarioService.findById(1).get();
+		orden.setUsuario(usuario);
+		ordenService.save(orden);
+		
+		//Guardar detalles
+		for (DetalleOrden dt : detalles) {
+			dt.setOrden(orden);
+			detalleOrdenService.save(dt);
+		}
+		
+		//Limpiar lista y orden 
+		orden = new Orden();
+		detalles.clear();
+		return "redirect:/";
 	}
 
 }
