@@ -1,6 +1,7 @@
 package com.company.ecommerce.backend.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -13,4 +14,5 @@ public interface IOrdenService {
 	Orden save(Orden orden);
 	String generarNumeroOrden();
 	List<Orden> findByUsuario(Usuario usuario);
+	Optional<Orden> findById(Integer id);
 }
